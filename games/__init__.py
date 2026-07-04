@@ -1,1 +1,1 @@
-
+"""Games package."""
