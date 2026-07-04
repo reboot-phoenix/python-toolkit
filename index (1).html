@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Python Toolkit — Password Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--green:#3fb950;--blue:#58a6ff;--orange:#f0883e;--purple:#a371f7;--red:#f85149;--accent:#238636;--accent-b:#2ea043}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}
+mono{font-family:'JetBrains Mono',monospace}
+
+nav{border-bottom:1px solid var(--border);padding:14px 32px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:15px;color:var(--green)}
+.nav-links{display:flex;gap:24px;font-size:14px;color:var(--muted)}
+.nav-links a{color:var(--muted);transition:color .15s}.nav-links a:hover{color:var(--text)}
+
+.hero{text-align:center;padding:64px 24px 48px;max-width:700px;margin:0 auto}
+.hero h1{font-size:clamp(24px,4vw,44px);font-weight:600;letter-spacing:-.02em;margin-bottom:12px;line-height:1.2}
+.hero h1 em{color:var(--green);font-style:normal}
+.hero p{color:var(--muted);font-size:16px;line-height:1.6;max-width:480px;margin:0 auto 40px}
+
+.tabs{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:4px;width:fit-content;margin:0 auto 40px}
+.tab{padding:8px 20px;border-radius:6px;font-size:14px;cursor:pointer;color:var(--muted);transition:all .15s;border:none;background:none;font-family:'Inter',sans-serif}
+.tab.active{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+
+.app{max-width:680px;margin:0 auto;padding:0 24px 80px;width:100%}
+
+.panel{display:none}.panel.active{display:block}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:16px}
+
+.output-box{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:20px 20px 16px;margin-bottom:20px;position:relative}
+.pw-display{font-family:'JetBrains Mono',monospace;font-size:clamp(15px,2.5vw,20px);letter-spacing:.08em;color:var(--green);word-break:break-all;line-height:1.6;min-height:32px}
+.pw-placeholder{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:14px}
+.copy-btn{position:absolute;top:14px;right:14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;padding:5px 10px;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+.copy-btn:hover{color:var(--text);border-color:#8b949e}
+.copy-btn.copied{color:var(--green);border-color:var(--green)}
+
+.strength-bar-wrap{height:4px;background:var(--surface2);border-radius:2px;margin-bottom:8px;overflow:hidden}
+.strength-bar{height:100%;border-radius:2px;transition:width .3s,background .3s}
+.strength-label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.strength-label span:last-child{font-weight:500}
+
+.controls{display:grid;gap:16px}
+.ctrl-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ctrl-label{font-size:14px;color:var(--text)}
+.ctrl-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+input[type=range]{flex:1;height:4px;border-radius:2px;appearance:none;background:var(--surface2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;border-radius:50%;background:var(--green);cursor:pointer;border:2px solid var(--bg)}
+
+.toggle{width:40px;height:22px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--accent);border-color:var(--accent-b)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s}
+.toggle.on::after{left:20px}
+
+.length-val{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--green);min-width:28px;text-align:right}
+
+.gen-btn{width:100%;padding:13px;background:var(--accent);border:1px solid var(--accent-b);border-radius:8px;color:#fff;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .15s;margin-top:8px}
+.gen-btn:hover{opacity:.85}
+.gen-btn:active{transform:scale(.99)}
+
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+
+.checker-input{width:100%;background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:14px 16px;color:var(--text);font-size:15px;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s}
+.checker-input:focus{border-color:var(--blue)}
+.checker-input::placeholder{color:var(--muted);font-family:'Inter',sans-serif;font-size:14px}
+
+.criteria{display:grid;gap:8px;margin-top:20px}
+.crit{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);transition:color .2s}
+.crit.pass{color:var(--text)}
+.crit-dot{width:8px;height:8px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);flex-shrink:0;transition:all .2s}
+.crit.pass .crit-dot{background:var(--green);border-color:var(--green)}
+
+.score-display{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.score-ring{width:56px;height:56px;flex-shrink:0}
+.score-info h3{font-size:18px;font-weight:600;margin-bottom:2px}
+.score-info p{font-size:13px;color:var(--muted)}
+
+.tip-box{background:rgba(88,166,255,.06);border:1px solid rgba(88,166,255,.15);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:16px}
+.tip-box b{color:var(--blue)}
+
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:36px}
+.badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%}
+
+footer{border-top:1px solid var(--border);padding:24px;text-align:center;font-size:13px;color:var(--muted);margin-top:auto}
+footer a{color:var(--muted)}.footer a:hover{color:var(--text)}
+
+@media(max-width:500px){nav{padding:12px 16px}.app{padding:0 16px 60px}.hero{padding:40px 16px 32px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">🐍 python-toolkit</span>
+  <div class="nav-links">
+    <a href="https://github.com/reboot-phoenix/python-toolkit">GitHub ↗</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge-row">
+    <span class="badge"><span class="dot" style="background:#3fb950"></span>Python 3.12</span>
+    <span class="badge"><span class="dot" style="background:#58a6ff"></span>32 tests passing</span>
+    <span class="badge"><span class="dot" style="background:#f0883e"></span>AES-128-CBC</span>
+  </div>
+  <h1>Secure password tools,<br><em>actually usable</em></h1>
+  <p>Generate strong passwords and check how secure yours are — running live in your browser.</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('gen',this)">Generate</button>
+    <button class="tab" onclick="switchTab('check',this)">Check strength</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <div id="gen" class="panel active">
+    <div class="card">
+      <div class="output-box">
+        <div class="pw-display" id="pw-out"><span class="pw-placeholder">Click generate to create a password</span></div>
+        <button class="copy-btn" id="copy-btn" onclick="copyPw()">Copy</button>
+      </div>
+      <div class="strength-bar-wrap"><div class="strength-bar" id="gen-bar" style="width:0%"></div></div>
+      <div class="strength-label"><span id="gen-strength-label">—</span><span id="gen-strength-score"></span></div>
+
+      <hr class="divider"/>
+
+      <div class="controls">
+        <div class="ctrl-row">
+          <div><div class="ctrl-label">Length</div></div>
+          <input type="range" min="8" max="64" value="16" step="1" id="length-slider" oninput="onLengthChange(this.value)"/>
+          <span class="length-val" id="length-val">16</span>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label">Uppercase &amp; lowercase</div>
+          <div class="toggle on" id="t-letters" onclick="toggleOpt(this)"></div>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label">Numbers (0–9)</div>
+          <div class="toggle on" id="t-digits" onclick="toggleOpt(this)"></div>
+        </div>
+        <div class="ctrl-row">
+          <div class="ctrl-label">Symbols (!@#$...)</div>
+          <div class="toggle on" id="t-symbols" onclick="toggleOpt(this)"></div>
+        </div>
+        <div class="ctrl-row">
+          <div><div class="ctrl-label">Exclude ambiguous</div><div class="ctrl-sub">Skip 0, O, l, 1 — easy to misread</div></div>
+          <div class="toggle" id="t-noambig" onclick="toggleOpt(this)"></div>
+        </div>
+      </div>
+
+      <button class="gen-btn" onclick="generate()">Generate password</button>
+    </div>
+  </div>
+
+  <div id="check" class="panel">
+    <div class="card">
+      <input class="checker-input" type="password" id="check-input" placeholder="Type or paste a password to check it" oninput="checkStrength(this.value)" autocomplete="off" autocorrect="off" spellcheck="false"/>
+
+      <div class="score-display" style="margin-top:24px" id="score-section">
+        <svg class="score-ring" viewBox="0 0 56 56" id="score-svg">
+          <circle cx="28" cy="28" r="23" fill="none" stroke="#21262d" stroke-width="5"/>
+          <circle cx="28" cy="28" r="23" fill="none" stroke="#21262d" stroke-width="5" stroke-dasharray="144.5" stroke-dashoffset="144.5" id="score-arc" stroke-linecap="round" transform="rotate(-90 28 28)" style="transition:stroke-dashoffset .4s,stroke .4s"/>
+          <text x="28" y="33" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" font-weight="600" fill="#e6edf3" id="score-num">—</text>
+        </svg>
+        <div class="score-info">
+          <h3 id="check-label">Enter a password</h3>
+          <p id="check-sub">We'll tell you how strong it is</p>
+        </div>
+      </div>
+
+      <div class="strength-bar-wrap"><div class="strength-bar" id="check-bar" style="width:0%"></div></div>
+
+      <div class="criteria" id="criteria">
+        <div class="crit" id="c-len"><div class="crit-dot"></div>At least 12 characters</div>
+        <div class="crit" id="c-mix"><div class="crit-dot"></div>Uppercase and lowercase letters</div>
+        <div class="crit" id="c-num"><div class="crit-dot"></div>Contains numbers</div>
+        <div class="crit" id="c-sym"><div class="crit-dot"></div>Contains symbols</div>
+        <div class="crit" id="c-long"><div class="crit-dot"></div>16+ characters (excellent)</div>
+      </div>
+
+      <div class="tip-box" id="tip-box" style="display:none"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Built with Python 3.12 · <a href="https://github.com/reboot-phoenix/python-toolkit">github.com/reboot-phoenix/python-toolkit</a> · MIT License
+</footer>
+
+<script>
+const LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const LETTERS_CLEAN = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ';
+const DIGITS = '0123456789';
+const DIGITS_CLEAN = '23456789';
+const SYMBOLS = '!@#$%^&*()-_=+[]{}|;:,.<>?';
+const AMBIGUOUS = new Set('0O1lI|`');
+
+let currentPw = '';
+
+function switchTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function onLengthChange(v) {
+  document.getElementById('length-val').textContent = v;
+}
+
+function toggleOpt(el) {
+  el.classList.toggle('on');
+}
+
+function isOn(id) {
+  return document.getElementById(id).classList.contains('on');
+}
+
+function secureRandom(max) {
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  return arr[0] % max;
+}
+
+function generate() {
+  const len = parseInt(document.getElementById('length-slider').value);
+  const noAmbig = isOn('t-noambig');
+  const useLetters = isOn('t-letters');
+  const useDigits = isOn('t-digits');
+  const useSymbols = isOn('t-symbols');
+
+  if (!useLetters && !useDigits && !useSymbols) {
+    document.getElementById('pw-out').innerHTML = '<span style="color:#f85149;font-family:Inter,sans-serif;font-size:14px">Pick at least one character type.</span>';
+    return;
+  }
+
+  let pool = '';
+  let required = [];
+
+  if (useLetters) {
+    const c = noAmbig ? LETTERS_CLEAN : LETTERS;
+    pool += c;
+    required.push(c[secureRandom(c.length)]);
+  }
+  if (useDigits) {
+    const c = noAmbig ? DIGITS_CLEAN : DIGITS;
+    pool += c;
+    required.push(c[secureRandom(c.length)]);
+  }
+  if (useSymbols) {
+    pool += SYMBOLS;
+    required.push(SYMBOLS[secureRandom(SYMBOLS.length)]);
+  }
+
+  let pw = [...required];
+  while (pw.length < len) pw.push(pool[secureRandom(pool.length)]);
+
+  for (let i = pw.length - 1; i > 0; i--) {
+    const j = secureRandom(i + 1);
+    [pw[i], pw[j]] = [pw[j], pw[i]];
+  }
+
+  currentPw = pw.join('');
+  document.getElementById('pw-out').textContent = currentPw;
+  document.getElementById('copy-btn').textContent = 'Copy';
+  document.getElementById('copy-btn').classList.remove('copied');
+  showGenStrength(currentPw);
+}
+
+function showGenStrength(pw) {
+  const s = evalStrength(pw);
+  const bar = document.getElementById('gen-bar');
+  const label = document.getElementById('gen-strength-label');
+  const score = document.getElementById('gen-strength-score');
+  const pct = (s.score / 5) * 100;
+  bar.style.width = pct + '%';
+  bar.style.background = s.color;
+  label.textContent = s.label;
+  label.style.color = s.color;
+  score.textContent = s.score + '/5';
+  score.style.color = s.color;
+}
+
+function copyPw() {
+  if (!currentPw) return;
+  navigator.clipboard.writeText(currentPw).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function evalStrength(pw) {
+  if (!pw) return { score: 0, label: '—', color: '#30363d' };
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (pw.length >= 12) s++;
+  if (pw.length >= 16) s++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw)) s++;
+  if (/[^A-Za-z0-9]/.test(pw)) s++;
+  s = Math.min(s, 5);
+  const labels = ['—', 'Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
+  const colors = ['#30363d', '#f85149', '#f0883e', '#e3b341', '#3fb950', '#3fb950'];
+  return { score: s, label: labels[s], color: colors[s] };
+}
+
+function checkStrength(pw) {
+  const s = evalStrength(pw);
+  const pct = pw.length === 0 ? 0 : (s.score / 5) * 100;
+
+  document.getElementById('check-bar').style.width = pct + '%';
+  document.getElementById('check-bar').style.background = s.color;
+  document.getElementById('check-label').textContent = pw.length === 0 ? 'Enter a password' : s.label;
+  document.getElementById('check-label').style.color = pw.length === 0 ? '' : s.color;
+  document.getElementById('check-sub').textContent = pw.length === 0 ? "We'll tell you how strong it is" : pw.length + ' characters';
+
+  const arc = document.getElementById('score-arc');
+  const num = document.getElementById('score-num');
+  const circumference = 144.5;
+  arc.style.strokeDashoffset = pw.length === 0 ? circumference : circumference - (s.score / 5) * circumference;
+  arc.style.stroke = pw.length === 0 ? '#21262d' : s.color;
+  num.textContent = pw.length === 0 ? '—' : s.score;
+
+  function setCrit(id, pass) {
+    document.getElementById(id).classList.toggle('pass', pass);
+  }
+  setCrit('c-len', pw.length >= 12);
+  setCrit('c-mix', /[A-Z]/.test(pw) && /[a-z]/.test(pw));
+  setCrit('c-num', /[0-9]/.test(pw));
+  setCrit('c-sym', /[^A-Za-z0-9]/.test(pw));
+  setCrit('c-long', pw.length >= 16);
+
+  const tip = document.getElementById('tip-box');
+  if (pw.length === 0) { tip.style.display = 'none'; return; }
+
+  const tips = [];
+  if (pw.length < 12) tips.push('<b>Too short.</b> Use at least 12 characters — longer is always better.');
+  if (!/[A-Z]/.test(pw) || !/[a-z]/.test(pw)) tips.push('<b>Mix case.</b> Add both uppercase and lowercase letters.');
+  if (!/[0-9]/.test(pw)) tips.push('<b>Add numbers.</b> Even one digit increases entropy significantly.');
+  if (!/[^A-Za-z0-9]/.test(pw)) tips.push('<b>Add symbols</b> like !@#$ to make it much harder to crack.');
+  if (s.score >= 4 && pw.length >= 12) tips.push('<b>Looking good.</b> This password would take a long time to crack.');
+
+  tip.style.display = 'block';
+  tip.innerHTML = tips.join('<br>');
+}
+</script>
+</body>
+</html>
