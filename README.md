@@ -24,7 +24,7 @@
 ## Quickstart
 
 ```bash
-git clone https://github.com/your-username/python-toolkit.git
+git clone https://github.com/reboot-phoenix/python-toolkit.git
 cd python-toolkit
 pip install -r requirements.txt
 ```
