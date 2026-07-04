@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Python Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;
+  --border:#30363d;--text:#e6edf3;--muted:#8b949e;
+  --green:#3fb950;--blue:#58a6ff;--orange:#f0883e;--purple:#a371f7;
+  --accent:#238636;--accent-border:#2ea043;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+a{color:var(--blue);text-decoration:none}
+code,pre,kbd{font-family:'JetBrains Mono',monospace}
+
+header{text-align:center;padding:72px 24px 48px;max-width:800px;margin:0 auto}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px}
+.badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:6px}
+.badge .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot-green{background:var(--green)}
+.dot-blue{background:var(--blue)}
+.dot-orange{background:var(--orange)}
+.dot-purple{background:var(--purple)}
+
+h1{font-size:clamp(28px,5vw,52px);font-weight:600;line-height:1.15;letter-spacing:-0.02em;margin-bottom:16px}
+h1 span{color:var(--green)}
+.tagline{font-size:18px;color:var(--muted);max-width:520px;margin:0 auto 40px;line-height:1.6}
+
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
+.btn{padding:10px 22px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:8px;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.btn-primary{background:var(--accent);border:1px solid var(--accent-border);color:#fff}
+.btn-secondary{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+
+.terminal{background:#0d1117;border:1px solid var(--border);border-radius:10px;overflow:hidden;max-width:640px;margin:0 auto;text-align:left}
+.term-bar{background:var(--surface2);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dot-r{width:12px;height:12px;border-radius:50%;background:#ff5f57}
+.dot-y{width:12px;height:12px;border-radius:50%;background:#febc2e}
+.dot-g{width:12px;height:12px;border-radius:50%;background:#28c840}
+.term-title{font-size:12px;color:var(--muted);margin-left:auto;margin-right:auto;padding-right:36px}
+.term-body{padding:20px 24px;font-size:13px;line-height:2}
+.c-muted{color:var(--muted)}
+.c-green{color:var(--green)}
+.c-blue{color:var(--blue)}
+.c-orange{color:var(--orange)}
+.c-purple{color:var(--purple)}
+.c-text{color:var(--text)}
+.prompt{color:var(--green)}
+
+main{max-width:900px;margin:0 auto;padding:0 24px 80px}
+
+.section-label{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:64px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;transition:border-color .2s}
+.card:hover{border-color:#8b949e}
+.card-icon{font-size:24px;margin-bottom:14px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card-badge{font-size:10px;font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--muted)}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--blue);background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:4px;padding:2px 7px}
+
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:32px}
+.code-header{background:var(--surface2);padding:8px 16px;font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+.code-body{padding:18px 20px;font-size:13px;line-height:1.9;overflow-x:auto}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:64px}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}}
+
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:64px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
+.stat-num{font-size:28px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--green)}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px}
+
+.design-list{list-style:none;display:grid;gap:12px;margin-bottom:64px}
+.design-list li{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-size:14px;line-height:1.6;color:var(--muted);display:flex;gap:12px}
+.design-list li strong{color:var(--text)}
+.design-list li::before{content:"//";font-family:'JetBrains Mono',monospace;color:var(--muted);opacity:.4;flex-shrink:0;margin-top:1px}
+
+footer{border-top:1px solid var(--border);padding:32px 24px;text-align:center;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge-row">
+    <span class="badge"><span class="dot dot-blue"></span>Python 3.12</span>
+    <span class="badge"><span class="dot dot-green"></span>32 tests passing</span>
+    <span class="badge"><span class="dot dot-orange"></span>AES-128-CBC</span>
+    <span class="badge"><span class="dot dot-purple"></span>MIT License</span>
+  </div>
+
+  <h1>Python <span>Toolkit</span></h1>
+  <p class="tagline">CLI tools built in pure Python — secure cryptography, OOP design, and clean code practices.</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/your-username/python-toolkit">⭐ Star on GitHub</a>
+    <a class="btn btn-secondary" href="https://github.com/your-username/python-toolkit/archive/refs/heads/main.zip">↓ Download ZIP</a>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <span class="term-title">bash</span>
+    </div>
+    <div class="term-body">
+      <div><span class="prompt">$</span> <span class="c-blue">git clone</span> <span class="c-text">https://github.com/your-username/python-toolkit.git</span></div>
+      <div><span class="prompt">$</span> <span class="c-blue">pip install</span> <span class="c-text">-r requirements.txt</span></div>
+      <div><span class="prompt">$</span> <span class="c-blue">python</span> <span class="c-text">-m password_manager generate --length 20</span></div>
+      <div>&nbsp;</div>
+      <div><span class="c-muted">Generated password:</span></div>
+      <div>&nbsp; <span class="c-green">qR7#mKv2$Lp9nWxE8@vZ</span></div>
+      <div>&nbsp;</div>
+      <div><span class="c-muted">Strength: </span><span class="c-green">Very Strong</span><span class="c-muted"> (4/4)</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <p class="section-label">Modules</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🔐</div>
+      <div class="card-title">password_manager <span class="card-badge">CLI</span></div>
+      <p class="card-desc">Generate cryptographically secure passwords and store credentials in an encrypted local vault.</p>
+      <div class="tag-row">
+        <span class="tag">PBKDF2</span><span class="tag">Fernet AES</span><span class="tag">argparse</span><span class="tag">getpass</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎮</div>
+      <div class="card-title">games <span class="card-badge">CLI</span></div>
+      <p class="card-desc">Number guessing game with three difficulty levels, a hint system, scoring, and session stats.</p>
+      <div class="tag-row">
+        <span class="tag">dataclasses</span><span class="tag">game loop</span><span class="tag">terminal UI</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛠️</div>
+      <div class="card-title">utils <span class="card-badge">lib</span></div>
+      <p class="card-desc">Reusable pure functions — slugify, clamp, truncate, chunk, flatten — with type hints and docstrings.</p>
+      <div class="tag-row">
+        <span class="tag">type hints</span><span class="tag">docstrings</span><span class="tag">pure functions</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">Usage</p>
+  <div class="two-col">
+    <div class="code-block">
+      <div class="code-header"><span>password manager</span><span>bash</span></div>
+      <div class="code-body">
+        <div><span class="c-muted"># generate</span></div>
+        <div><span class="c-blue">python</span> <span class="c-text">-m password_manager generate</span></div>
+        <div>&nbsp;</div>
+        <div><span class="c-muted"># save to vault</span></div>
+        <div><span class="c-blue">python</span> <span class="c-text">-m password_manager add github \</span></div>
+        <div>&nbsp; <span class="c-text">--username you@mail.com --generate</span></div>
+        <div>&nbsp;</div>
+        <div><span class="c-muted"># retrieve</span></div>
+        <div><span class="c-blue">python</span> <span class="c-text">-m password_manager get github</span></div>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span>utils</span><span>python</span></div>
+      <div class="code-body">
+        <div><span class="c-purple">from</span> <span class="c-text">utils</span> <span class="c-purple">import</span> <span class="c-text">slugify, clamp, chunk</span></div>
+        <div>&nbsp;</div>
+        <div><span class="c-blue">slugify</span><span class="c-text">("Hello, World!")</span></div>
+        <div><span class="c-muted"># → "hello-world"</span></div>
+        <div>&nbsp;</div>
+        <div><span class="c-blue">clamp</span><span class="c-text">(15, 0, 10)</span></div>
+        <div><span class="c-muted"># → 10</span></div>
+        <div>&nbsp;</div>
+        <div><span class="c-blue">chunk</span><span class="c-text">([1, 2, 3, 4, 5], 2)</span></div>
+        <div><span class="c-muted"># → [[1, 2], [3, 4], [5]]</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">By the numbers</p>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num">32</div><div class="stat-label">tests passing</div></div>
+    <div class="stat"><div class="stat-num">480k</div><div class="stat-label">PBKDF2 iterations</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">modules</div></div>
+  </div>
+
+  <p class="section-label">Design decisions</p>
+  <ul class="design-list">
+    <li><strong>secrets over random</strong> — uses the OS CSPRNG, not a pseudo-random generator. Matters for anything security-related.</li>
+    <li><strong>PBKDF2 at 480k iterations</strong> — follows OWASP 2023 recommendation for PBKDF2-HMAC-SHA256, making brute-force infeasible.</li>
+    <li><strong>Fernet for symmetric encryption</strong> — authenticated AES. Tampered ciphertext raises an exception rather than silently decrypting garbage.</li>
+    <li><strong>Salt stored separately</strong> — never embedded in the vault file, so the vault alone is useless without the salt file.</li>
+  </ul>
+
+</main>
+
+<footer>
+  Built with Python 3.12 · MIT License · <a href="https://github.com/your-username/python-toolkit">github.com/your-username/python-toolkit</a>
+</footer>
+
+</body>
+</html>
